@@ -65,9 +65,10 @@ type App struct {
 }
 
 func (d *App) DescribeServicesInput() *ecs.DescribeServicesInput {
+	serviceName := os.Getenv("SERVICE_NAME")
 	return &ecs.DescribeServicesInput{
 		Cluster:  aws.String(d.Cluster),
-		Services: []*string{aws.String(d.Service)},
+		Services: []*string{aws.String(serviceName)},
 	}
 }
 

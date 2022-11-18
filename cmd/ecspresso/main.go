@@ -21,7 +21,7 @@ func main() {
 func _main() int {
 	kingpin.Command("version", "show version")
 
-	conf := kingpin.Flag("config", "config file").Default("ecspresso.yml").String()
+	conf := kingpin.Flag("config", "config file").Default("config.yml").String()
 	debug := kingpin.Flag("debug", "enable debug log").Bool()
 	envFiles := kingpin.Flag("envfile", "environment files").Strings()
 	extStr := kingpin.Flag("ext-str", "external string values for Jsonnet").StringMap()
@@ -72,6 +72,11 @@ func _main() int {
 		LatestTaskDefinition: boolp(false),
 	}
 
+	restart := kingpin.Command("restart", "restart service. equivalent to deploy --skip-task-definition --force-new-deployment --no-update-service")
+	restartOption := ecspresso.RestartOption{
+		ConfigFile: restart.Flag("config-file", "config file we'll use").Bool(),
+	}
+
 	create := kingpin.Command("create", "create service")
 	createOption := ecspresso.CreateOption{
 		DryRun:       create.Flag("dry-run", "dry-run").Bool(),
@@ -82,6 +87,11 @@ func _main() int {
 	status := kingpin.Command("status", "show status of service")
 	statusOption := ecspresso.StatusOption{
 		Events: status.Flag("events", "show events num").Default("2").Int(),
+	}
+
+	list := kingpin.Command("list", "list all services")
+	listOption := ecspresso.ListOption{
+		ConfigFile: list.Flag("config-file", "config file we'll use").Bool(),
 	}
 
 	rollback := kingpin.Command("rollback", "roll back a service")
@@ -209,6 +219,7 @@ func _main() int {
 	}
 
 	c := ecspresso.NewDefaultConfig()
+
 	if sub == "init" {
 		c.Region = *initOption.Region
 		c.Cluster = *initOption.Cluster
@@ -262,6 +273,10 @@ func _main() int {
 		err = app.Deploy(scaleOption)
 	case "status":
 		err = app.Status(statusOption)
+	case "list":
+		err = app.ListServices(listOption)
+	case "restart":
+		err = app.RestartService(restartOption)
 	case "rollback":
 		err = app.Rollback(rollbackOption)
 	case "create":
