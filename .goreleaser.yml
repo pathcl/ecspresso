@@ -23,8 +23,6 @@ release:
 archives:
 checksum:
   name_template: "checksums.txt"
-snapshot:
-  name_template: "{{ .Env.NIGHTLY_VERSION }}"
 changelog:
   sort: asc
   filters:
