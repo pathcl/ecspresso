@@ -17,8 +17,6 @@ builds:
     goarch:
       - amd64
       - arm64
-release:
-  prerelease: true
 archives:
 checksum:
   name_template: "checksums.txt"
@@ -31,15 +29,3 @@ changelog:
 release:
   # Visit your project's GitHub Releases page to publish this release.
   # draft: true
-signs:
-  - artifacts: checksum
-    args:
-      # if you are using this is a GitHub action or some other automated pipeline, you
-      # need to pass the batch flag to indicate its not interactive.
-      - "--batch"
-      - "--local-user"
-      - "{{ .Env.GPG_FINGERPRINT }}" # set this environment variable for your signing key
-      - "--output"
-      - "${signature}"
-      - "--detach-sign"
-      - "${artifact}"
